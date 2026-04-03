@@ -10,39 +10,24 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export interface Contact {
-  'id' : bigint,
-  'name' : string,
-  'email' : string,
-  'message' : string,
-}
-export interface Event {
-  'name' : string,
-  'description' : string,
-  'category' : string,
-  'prizes' : Array<string>,
-  'maxParticipants' : bigint,
-}
-export interface Registration {
-  'id' : bigint,
-  'name' : string,
-  'email' : string,
-  'teamMembers' : Array<string>,
-  'event' : string,
-  'phone' : string,
-  'college' : string,
-}
+export interface Message { 'content' : string, 'author' : string }
+export interface UserProfile { 'name' : string }
+export type UserRole = { 'admin' : null } |
+  { 'user' : null } |
+  { 'guest' : null };
 export interface _SERVICE {
-  'getAllContacts' : ActorMethod<[], Array<Contact>>,
-  'getAllEvents' : ActorMethod<[], Array<Event>>,
-  'getAllRegistrations' : ActorMethod<[], Array<Registration>>,
-  'getRegistrationsByEvent' : ActorMethod<[string], Array<Registration>>,
-  'registerEvent' : ActorMethod<
-    [string, string, string, string, string, Array<string>],
-    undefined
-  >,
-  'searchEventsByCategory' : ActorMethod<[string], Array<Event>>,
-  'submitContactForm' : ActorMethod<[string, string, string], undefined>,
+  '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addMessage' : ActorMethod<[string, string], undefined>,
+  'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'deleteMessage' : ActorMethod<[string, string], undefined>,
+  'getAllMessages' : ActorMethod<[], Array<Message>>,
+  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
+  'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'isCallerAdmin' : ActorMethod<[], boolean>,
+  'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'searchMessagesByAuthor' : ActorMethod<[string], Array<Message>>,
+  'updateMessage' : ActorMethod<[string, string, string], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

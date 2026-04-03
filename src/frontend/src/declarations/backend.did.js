@@ -8,93 +8,72 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
-export const Contact = IDL.Record({
-  'id' : IDL.Nat,
-  'name' : IDL.Text,
-  'email' : IDL.Text,
-  'message' : IDL.Text,
+export const UserRole = IDL.Variant({
+  'admin' : IDL.Null,
+  'user' : IDL.Null,
+  'guest' : IDL.Null,
 });
-export const Event = IDL.Record({
-  'name' : IDL.Text,
-  'description' : IDL.Text,
-  'category' : IDL.Text,
-  'prizes' : IDL.Vec(IDL.Text),
-  'maxParticipants' : IDL.Nat,
+export const Message = IDL.Record({
+  'content' : IDL.Text,
+  'author' : IDL.Text,
 });
-export const Registration = IDL.Record({
-  'id' : IDL.Nat,
-  'name' : IDL.Text,
-  'email' : IDL.Text,
-  'teamMembers' : IDL.Vec(IDL.Text),
-  'event' : IDL.Text,
-  'phone' : IDL.Text,
-  'college' : IDL.Text,
-});
+export const UserProfile = IDL.Record({ 'name' : IDL.Text });
 
 export const idlService = IDL.Service({
-  'getAllContacts' : IDL.Func([], [IDL.Vec(Contact)], ['query']),
-  'getAllEvents' : IDL.Func([], [IDL.Vec(Event)], ['query']),
-  'getAllRegistrations' : IDL.Func([], [IDL.Vec(Registration)], ['query']),
-  'getRegistrationsByEvent' : IDL.Func(
-      [IDL.Text],
-      [IDL.Vec(Registration)],
+  '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addMessage' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'deleteMessage' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'getAllMessages' : IDL.Func([], [IDL.Vec(Message)], ['query']),
+  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getUserProfile' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Opt(UserProfile)],
       ['query'],
     ),
-  'registerEvent' : IDL.Func(
-      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Vec(IDL.Text)],
-      [],
-      [],
+  'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'searchMessagesByAuthor' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(Message)],
+      ['query'],
     ),
-  'searchEventsByCategory' : IDL.Func([IDL.Text], [IDL.Vec(Event)], ['query']),
-  'submitContactForm' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+  'updateMessage' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
-  const Contact = IDL.Record({
-    'id' : IDL.Nat,
-    'name' : IDL.Text,
-    'email' : IDL.Text,
-    'message' : IDL.Text,
+  const UserRole = IDL.Variant({
+    'admin' : IDL.Null,
+    'user' : IDL.Null,
+    'guest' : IDL.Null,
   });
-  const Event = IDL.Record({
-    'name' : IDL.Text,
-    'description' : IDL.Text,
-    'category' : IDL.Text,
-    'prizes' : IDL.Vec(IDL.Text),
-    'maxParticipants' : IDL.Nat,
-  });
-  const Registration = IDL.Record({
-    'id' : IDL.Nat,
-    'name' : IDL.Text,
-    'email' : IDL.Text,
-    'teamMembers' : IDL.Vec(IDL.Text),
-    'event' : IDL.Text,
-    'phone' : IDL.Text,
-    'college' : IDL.Text,
-  });
+  const Message = IDL.Record({ 'content' : IDL.Text, 'author' : IDL.Text });
+  const UserProfile = IDL.Record({ 'name' : IDL.Text });
   
   return IDL.Service({
-    'getAllContacts' : IDL.Func([], [IDL.Vec(Contact)], ['query']),
-    'getAllEvents' : IDL.Func([], [IDL.Vec(Event)], ['query']),
-    'getAllRegistrations' : IDL.Func([], [IDL.Vec(Registration)], ['query']),
-    'getRegistrationsByEvent' : IDL.Func(
-        [IDL.Text],
-        [IDL.Vec(Registration)],
+    '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addMessage' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'deleteMessage' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'getAllMessages' : IDL.Func([], [IDL.Vec(Message)], ['query']),
+    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getUserProfile' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Opt(UserProfile)],
         ['query'],
       ),
-    'registerEvent' : IDL.Func(
-        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Vec(IDL.Text)],
-        [],
-        [],
-      ),
-    'searchEventsByCategory' : IDL.Func(
+    'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'searchMessagesByAuthor' : IDL.Func(
         [IDL.Text],
-        [IDL.Vec(Event)],
+        [IDL.Vec(Message)],
         ['query'],
       ),
-    'submitContactForm' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+    'updateMessage' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
   });
 };
 

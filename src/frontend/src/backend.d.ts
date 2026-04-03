@@ -7,34 +7,28 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export interface Registration {
-    id: bigint;
-    name: string;
-    email: string;
-    teamMembers: Array<string>;
-    event: string;
-    phone: string;
-    college: string;
+export interface Message {
+    content: string;
+    author: string;
 }
-export interface Contact {
-    id: bigint;
+export interface UserProfile {
     name: string;
-    email: string;
-    message: string;
 }
-export interface Event {
-    name: string;
-    description: string;
-    category: string;
-    prizes: Array<string>;
-    maxParticipants: bigint;
+export enum UserRole {
+    admin = "admin",
+    user = "user",
+    guest = "guest"
 }
 export interface backendInterface {
-    getAllContacts(): Promise<Array<Contact>>;
-    getAllEvents(): Promise<Array<Event>>;
-    getAllRegistrations(): Promise<Array<Registration>>;
-    getRegistrationsByEvent(eventName: string): Promise<Array<Registration>>;
-    registerEvent(name: string, email: string, phone: string, college: string, event: string, teamMembers: Array<string>): Promise<void>;
-    searchEventsByCategory(category: string): Promise<Array<Event>>;
-    submitContactForm(name: string, email: string, message: string): Promise<void>;
+    addMessage(author: string, content: string): Promise<void>;
+    assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    deleteMessage(author: string, content: string): Promise<void>;
+    getAllMessages(): Promise<Array<Message>>;
+    getCallerUserProfile(): Promise<UserProfile | null>;
+    getCallerUserRole(): Promise<UserRole>;
+    getUserProfile(user: Principal): Promise<UserProfile | null>;
+    isCallerAdmin(): Promise<boolean>;
+    saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    searchMessagesByAuthor(author: string): Promise<Array<Message>>;
+    updateMessage(oldAuthor: string, oldContent: string, newContent: string): Promise<void>;
 }

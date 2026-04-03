@@ -1,63 +1,47 @@
 import { Toaster } from "@/components/ui/sonner";
-import { AboutSection } from "./components/AboutSection";
-import { AdminPanel } from "./components/AdminPanel";
-import { ContactSection } from "./components/ContactSection";
-import { EventsSection } from "./components/EventsSection";
-import { Footer } from "./components/Footer";
-import { GallerySection } from "./components/GallerySection";
-import { HeroSection } from "./components/HeroSection";
-import { Navbar } from "./components/Navbar";
-import { RegistrationSection } from "./components/RegistrationSection";
-import { ScheduleSection } from "./components/ScheduleSection";
-
-const isAdminRoute =
-  typeof window !== "undefined" &&
-  (window.location.pathname === "/admin" || window.location.hash === "#/admin");
+import { useCallback, useState } from "react";
+import { MusicPlayer } from "./components/MusicPlayer";
+import { Slide1 } from "./components/slides/Slide1";
+import { Slide2 } from "./components/slides/Slide2";
+import { Slide3 } from "./components/slides/Slide3";
+import { Slide4 } from "./components/slides/Slide4";
+import { Slide5 } from "./components/slides/Slide5";
+import { Slide6 } from "./components/slides/Slide6";
+import { Slide7 } from "./components/slides/Slide7";
+import { Slide8 } from "./components/slides/Slide8";
 
 export default function App() {
-  if (isAdminRoute) {
-    return (
-      <>
-        <Toaster
-          theme="dark"
-          toastOptions={{
-            style: {
-              background: "#0a120a",
-              border: "1px solid #00ff41",
-              color: "#e8f5e8",
-              fontFamily: "Rajdhani, sans-serif",
-            },
-          }}
-        />
-        <AdminPanel />
-      </>
-    );
-  }
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const goToSlide = useCallback((index: number) => {
+    setCurrentSlide(((index % 8) + 8) % 8);
+  }, []);
+
+  const next = useCallback(
+    () => goToSlide(currentSlide + 1),
+    [currentSlide, goToSlide],
+  );
 
   return (
-    <div className="min-h-screen bg-bg-deep text-foreground overflow-x-hidden">
-      <Toaster
-        theme="dark"
-        toastOptions={{
-          style: {
-            background: "#0a120a",
-            border: "1px solid #00ff41",
-            color: "#e8f5e8",
-            fontFamily: "Rajdhani, sans-serif",
-          },
-        }}
-      />
-      <Navbar />
-      <main>
-        <HeroSection />
-        <AboutSection />
-        <EventsSection />
-        <ScheduleSection />
-        <GallerySection />
-        <RegistrationSection />
-        <ContactSection />
-      </main>
-      <Footer />
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "#0a0a0b",
+        overflow: "hidden",
+        fontFamily: "Montserrat,sans-serif",
+      }}
+    >
+      <Toaster />
+      {currentSlide === 0 && <Slide1 onNext={next} />}
+      {currentSlide === 1 && <Slide2 onNext={next} />}
+      {currentSlide === 2 && <Slide3 onNext={next} />}
+      {currentSlide === 3 && <Slide4 onNext={next} />}
+      {currentSlide === 4 && <Slide5 onNext={next} />}
+      {currentSlide === 5 && <Slide6 onNext={next} />}
+      {currentSlide === 6 && <Slide7 onNext={next} />}
+      {currentSlide === 7 && <Slide8 onNext={next} />}
+      <MusicPlayer />
     </div>
   );
 }

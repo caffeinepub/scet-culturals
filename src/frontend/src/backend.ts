@@ -89,137 +89,236 @@ export class ExternalBlob {
         return this;
     }
 }
-export interface Registration {
-    id: bigint;
-    name: string;
-    email: string;
-    teamMembers: Array<string>;
-    event: string;
-    phone: string;
-    college: string;
+export interface Message {
+    content: string;
+    author: string;
 }
-export interface Contact {
-    id: bigint;
+export interface UserProfile {
     name: string;
-    email: string;
-    message: string;
 }
-export interface Event {
-    name: string;
-    description: string;
-    category: string;
-    prizes: Array<string>;
-    maxParticipants: bigint;
+export enum UserRole {
+    admin = "admin",
+    user = "user",
+    guest = "guest"
 }
 export interface backendInterface {
-    getAllContacts(): Promise<Array<Contact>>;
-    getAllEvents(): Promise<Array<Event>>;
-    getAllRegistrations(): Promise<Array<Registration>>;
-    getRegistrationsByEvent(eventName: string): Promise<Array<Registration>>;
-    registerEvent(name: string, email: string, phone: string, college: string, event: string, teamMembers: Array<string>): Promise<void>;
-    searchEventsByCategory(category: string): Promise<Array<Event>>;
-    submitContactForm(name: string, email: string, message: string): Promise<void>;
+    _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
+    addMessage(author: string, content: string): Promise<void>;
+    assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    deleteMessage(author: string, content: string): Promise<void>;
+    getAllMessages(): Promise<Array<Message>>;
+    getCallerUserProfile(): Promise<UserProfile | null>;
+    getCallerUserRole(): Promise<UserRole>;
+    getUserProfile(user: Principal): Promise<UserProfile | null>;
+    isCallerAdmin(): Promise<boolean>;
+    saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    searchMessagesByAuthor(author: string): Promise<Array<Message>>;
+    updateMessage(oldAuthor: string, oldContent: string, newContent: string): Promise<void>;
 }
+import type { UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
-    async getAllContacts(): Promise<Array<Contact>> {
+    async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.getAllContacts();
+                const result = await this.actor._initializeAccessControlWithSecret(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getAllContacts();
+            const result = await this.actor._initializeAccessControlWithSecret(arg0);
             return result;
         }
     }
-    async getAllEvents(): Promise<Array<Event>> {
+    async addMessage(arg0: string, arg1: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.getAllEvents();
+                const result = await this.actor.addMessage(arg0, arg1);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getAllEvents();
+            const result = await this.actor.addMessage(arg0, arg1);
             return result;
         }
     }
-    async getAllRegistrations(): Promise<Array<Registration>> {
+    async assignCallerUserRole(arg0: Principal, arg1: UserRole): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.getAllRegistrations();
+                const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n1(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getAllRegistrations();
+            const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n1(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
-    async getRegistrationsByEvent(arg0: string): Promise<Array<Registration>> {
+    async deleteMessage(arg0: string, arg1: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.getRegistrationsByEvent(arg0);
+                const result = await this.actor.deleteMessage(arg0, arg1);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getRegistrationsByEvent(arg0);
+            const result = await this.actor.deleteMessage(arg0, arg1);
             return result;
         }
     }
-    async registerEvent(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: Array<string>): Promise<void> {
+    async getAllMessages(): Promise<Array<Message>> {
         if (this.processError) {
             try {
-                const result = await this.actor.registerEvent(arg0, arg1, arg2, arg3, arg4, arg5);
+                const result = await this.actor.getAllMessages();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.registerEvent(arg0, arg1, arg2, arg3, arg4, arg5);
+            const result = await this.actor.getAllMessages();
             return result;
         }
     }
-    async searchEventsByCategory(arg0: string): Promise<Array<Event>> {
+    async getCallerUserProfile(): Promise<UserProfile | null> {
         if (this.processError) {
             try {
-                const result = await this.actor.searchEventsByCategory(arg0);
+                const result = await this.actor.getCallerUserProfile();
+                return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCallerUserProfile();
+            return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getCallerUserRole(): Promise<UserRole> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCallerUserRole();
+                return from_candid_UserRole_n4(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCallerUserRole();
+            return from_candid_UserRole_n4(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getUserProfile(arg0: Principal): Promise<UserProfile | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getUserProfile(arg0);
+                return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getUserProfile(arg0);
+            return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async isCallerAdmin(): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.isCallerAdmin();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.searchEventsByCategory(arg0);
+            const result = await this.actor.isCallerAdmin();
             return result;
         }
     }
-    async submitContactForm(arg0: string, arg1: string, arg2: string): Promise<void> {
+    async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.submitContactForm(arg0, arg1, arg2);
+                const result = await this.actor.saveCallerUserProfile(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.submitContactForm(arg0, arg1, arg2);
+            const result = await this.actor.saveCallerUserProfile(arg0);
             return result;
         }
     }
+    async searchMessagesByAuthor(arg0: string): Promise<Array<Message>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.searchMessagesByAuthor(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.searchMessagesByAuthor(arg0);
+            return result;
+        }
+    }
+    async updateMessage(arg0: string, arg1: string, arg2: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateMessage(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateMessage(arg0, arg1, arg2);
+            return result;
+        }
+    }
+}
+function from_candid_UserRole_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
+    return from_candid_variant_n5(_uploadFile, _downloadFile, value);
+}
+function from_candid_opt_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_variant_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    admin: null;
+} | {
+    user: null;
+} | {
+    guest: null;
+}): UserRole {
+    return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
+}
+function to_candid_UserRole_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
+    return to_candid_variant_n2(_uploadFile, _downloadFile, value);
+}
+function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
+    admin: null;
+} | {
+    user: null;
+} | {
+    guest: null;
+} {
+    return value == UserRole.admin ? {
+        admin: null
+    } : value == UserRole.user ? {
+        user: null
+    } : value == UserRole.guest ? {
+        guest: null
+    } : value;
 }
 export interface CreateActorOptions {
     agent?: Agent;
